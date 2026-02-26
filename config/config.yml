@@ -1,0 +1,10 @@
+server:
+  port: 8090
+
+mongo:
+  uri: mongodb://root:root@127.0.0.1:27017/somq?authSource=admin
+  database: somq
+
+kafka:
+  brokers:
+    - 127.0.0.1:9092

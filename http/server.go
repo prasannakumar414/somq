@@ -5,24 +5,28 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/prasannakumar414/somq/http/handlers"
 	"go.uber.org/zap"
 )
 
 type Server struct {
-	port   int
-	logger zap.Logger
+	port           int
+	logger         zap.Logger
+	messageHandler *handlers.MessageHandler
 }
 
-func NewServer(port int, logger zap.Logger) *Server {
+func NewServer(port int, logger zap.Logger, messageHandler *handlers.MessageHandler) *Server {
 	return &Server{
-		port:   port,
-		logger: logger,
+		port:           port,
+		logger:         logger,
+		messageHandler: messageHandler,
 	}
 }
 
 func (s *Server) Serve() error {
 	router := chi.NewRouter()
 	router.Get("/health", ToHttpHandler(healthHandler))
+	router.Post("/schedule", ToHttpHandler(s.messageHandler.ScheduleMessage))
 	s.logger.Info("Starting server", zap.Int("port", s.port))
 	return http.ListenAndServe(":8090", router)
 }
